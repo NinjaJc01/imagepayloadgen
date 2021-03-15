@@ -1,0 +1,41 @@
+<head>
+    <script src="/js/index.js"></script>
+    <script src="/js/piexif.js"></script>
+</head>
+
+<body>
+    <h1>PHP Image Upload Payload Generator</h1>
+    <form>
+
+        <div>
+            <label for="payload">PHP Payload (with tags)</label><input id="payload" name="payload" type="text"
+                placeholder="Enter PHP payload here">
+        </div>
+        <div>
+            <label for="embedOption">Payload Embed Method</label>
+            <select id="embedOption" name="embedOption" onchange="onEmbedChosen(this)">
+                <option value="" selected disabled hidden>Pick a method</option>
+                <option value="exif">EXIF Comment</option>
+                <option value="mime">After Valid Image Header (MIME/Magic Bytes)</option>
+            </select>
+        </div>
+        <div style="display: none;" id="fileDiv">
+            <label for="">Attach Image</label><input type="file" onchange="imageInfo(this)">
+            <p><em>Note:</em> Image must be JPEG format for EXIF.</p>
+            <p>This does not bypass resize on PNGs, see <a href="https://www.idontplaydarts.com/2012/06/encoding-web-shells-in-png-idat-chunks/">Encoding Webshells in PNG IDAT chunks</a></p>
+        </div>
+        <div style="display: none;" id="headerDiv">
+            <label for="headerOptions">Header to add:</label>
+            <select id="headerOptions" onchange="onHeaderChosen(this)">
+                <option value="" selected disabled hidden>Pick a header</option>
+                <option value="jpegHeader">JPEG</option>
+                <option value="pngHeader">PNG</option>
+                <option value="gifHeader">GIF (With a hard G)</option>
+                <option value="jifHeader">GIF (With a soft G)</option>
+            </select>
+        </div>
+        <div><label for="extension">Set extension to:</label><input type="text" id="finalExt"></div>
+        <button type="button" onclick="makeAndDownloadPayload()">Make My Payload!</button>
+        <div id="statusDiv"></div>
+    </form>
+</body>
