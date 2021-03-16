@@ -2,12 +2,14 @@
     <script src="/js/index.js"></script>
     <script src="/js/piexif.js"></script>
     <link rel="stylesheet" href="style.css">
+    <title>PHP Image Payload Generator</title>
 </head>
 
 <body>
     <h1>PHP Image Upload Payload Generator</h1>
     <p>This does not bypass resize on PNGs, see <a href="https://www.idontplaydarts.com/2012/06/encoding-web-shells-in-png-idat-chunks/">Encoding Webshells in PNG IDAT chunks</a></p>
     <p>This tool currently supports EXIF comment embedded payloads, and payloads after a valid file header to bypass MIME type checks</p>
+    <p>Break something? Want to add a feature? <a href="https://github.com/NinjaJc01/imagepayloadgen">https://github.com/NinjaJc01/imagepayloadgen</a></p>
     <form>
         <div>
             <label for="payload">PHP Payload (with tags)</label><input id="payload" name="payload" type="text"
@@ -35,7 +37,7 @@
                 <option value="jifHeader">GIF (With a soft G)</option>
             </select>
         </div>
-        <div><label for="extension">Set extension to:</label><input type="text" id="finalExt"></div>
+        <div><label for="extension">Set extension to (with .):</label><input type="text" id="finalExt" placeholder=".jpg.php"></div>
         <button type="button" onclick="makeAndDownloadPayload()">Make My Payload!</button>
         <div id="statusDiv"></div>
     </form>
