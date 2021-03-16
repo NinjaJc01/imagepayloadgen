@@ -26,6 +26,7 @@
         <div style="display: none;" id="fileDiv">
             <label for="">Attach Image</label><input type="file" id="uploadElem" onchange="imageInfo(this)" accept="image/jpeg">
             <span><em>Note:</em> Image must be JPEG format for EXIF.</span>
+            <p><em>Warning:</em> Due to the Exif library used, payloads will be UTF16 encoded which may lead to additional null bytes</p>
         </div>
         <div style="display: none;" id="headerDiv">
             <label for="headerOptions">Header to add:</label>

@@ -1,3 +1,4 @@
+"use strict";
 const fileHeaderMap = new Map([
     ["jpegHeader", new Uint8Array([255, 216, 255, 219])],
     ["pngHeader", new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10])],
@@ -8,20 +9,19 @@ var payloadObject = {
     headerType: "",
     imageData: null,
     fileName: ""
-}
+};
 
 function onEmbedChosen(self) {
-    document.getElementById("headerDiv").style = (self.value === "mime" ? "" : "display: none;")
-    document.getElementById("fileDiv").style = (self.value === "exif" ? "" : "display: none;")
+    document.getElementById("headerDiv").style = (self.value === "mime" ? "" : "display: none;");
+    document.getElementById("fileDiv").style = (self.value === "exif" ? "" : "display: none;");
 }
 
 function onHeaderChosen(self) {
-    console.log(self.value)
     if (self.value === "jifHeader") {
-        alert("Incorrect pronounciation detected. We've corrected your mistake for now.")
-        self.value = "gifHeader"
+        alert("Incorrect pronounciation detected. We've corrected your mistake for now.");
+        self.value = "gifHeader";
     }
-    payloadObject.headerType = self.value
+    payloadObject.headerType = self.value;
 }
 
 function appendArrayBuffers(buffer1, buffer2) { // Thanks to https://gist.github.com/72lions/4528834
@@ -36,36 +36,35 @@ function makeAndDownloadPayload() {
     link.style.display = 'none';
     document.body.appendChild(link);
     link.download = payloadObject.fileName;
-    
+
     //If it's PNG/JPEG/GIF, add it after header
     if (payloadObject.headerType !== "") {
         //Form Payload buffer?
         const encoder = new TextEncoder();
-        const payloadTypedArray = encoder.encode(document.getElementById("payload").value)
-        payloadObject.imageData = appendArrayBuffers(fileHeaderMap.get(payloadObject.headerType).buffer, payloadTypedArray.buffer)
-        payloadObject.fileName = "payload" + document.getElementById("finalExt").value
-        const resultBlob = new Blob([payloadObject.imageData], { type: 'application/octet-binary' })
-        
+        const payloadTypedArray = encoder.encode(document.getElementById("payload").value);
+        payloadObject.imageData = appendArrayBuffers(fileHeaderMap.get(payloadObject.headerType).buffer, payloadTypedArray.buffer);
+        payloadObject.fileName = "payload" + document.getElementById("finalExt").value;
+        const resultBlob = new Blob([payloadObject.imageData], { type: 'application/octet-binary' });
         link.href = URL.createObjectURL(resultBlob);
-        link.download = payloadObject.fileName;
     } else { //If it's for an exif, add as Exif comment
         const exif = {};
         exif[piexif.ExifIFD.UserComment] = document.getElementById("payload").value;
-        const exifObj = {"0th":{}, "GPS":{}, "Exif":exif}
-        payloadObject.imageData = piexif.insert(piexif.dump(exifObj), payloadObject.imageData)
-        link.download = payloadObject.fileName;
-        link.href = payloadObject.imageData
+        const exifObj = { "0th": {}, "GPS": {}, "Exif": exif };
+        payloadObject.imageData = piexif.insert(piexif.dump(exifObj), payloadObject.imageData);
+        
+        link.href = payloadObject.imageData;
     }
+    link.download = payloadObject.fileName;
     link.click();
 }
 
 function imageInfo(self) {
-    const file = self.files[0]
-    console.log(file.name, file.size, file.type)
-    payloadObject.fileName = file.name.split(".")[0]
-    const reader = new FileReader()
-    reader.readAsDataURL(file)
+    const file = self.files[0];
+    console.log(file.name, file.size, file.type);
+    payloadObject.fileName = file.name.split(".")[0];
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
     reader.onload = function () {
-        payloadObject.imageData = reader.result
+        payloadObject.imageData = reader.result;
     }
 }
