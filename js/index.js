@@ -6,7 +6,7 @@ const fileHeaderMap = new Map([
 
 var payloadObject = {
     headerType: "",
-    imageData: ArrayBuffer,
+    imageData: null,
     fileName: ""
 }
 
@@ -24,22 +24,6 @@ function onHeaderChosen(self) {
     payloadObject.headerType = self.value
 }
 
-function embedPayloadInPayloadObject() {
-    //If it's PNG/JPEG/GIF, add it after header
-    if (payloadObject.headerType !== "") {
-        //Form Payload buffer?
-        const encoder = new TextEncoder();
-        const payloadTypedArray = encoder.encode(document.getElementById("payload").value)
-        payloadObject.imageData = appendArrayBuffers(fileHeaderMap.get(payloadObject.headerType).buffer, payloadTypedArray.buffer)
-        payloadObject.fileName = "payload" + document.getElementById("finalExt").value
-    } else { //If it's for an exif, add as Exif comment
-        const exif = {}
-        //TODO - This exif library doesn't like ArrayBuffer images, just use the form for it
-        exif[piexif.ExifIFD.UserComment] = document.getElementById("payload").value
-        piexif.insert(piexif.dump({"Exif":exif}), payloadObject.imageData)
-    }
-}
-
 function appendArrayBuffers(buffer1, buffer2) { // Thanks to https://gist.github.com/72lions/4528834
     var tmp = new Uint8Array(buffer1.byteLength + buffer2.byteLength);
     tmp.set(new Uint8Array(buffer1), 0);
@@ -48,13 +32,30 @@ function appendArrayBuffers(buffer1, buffer2) { // Thanks to https://gist.github
 }
 
 function makeAndDownloadPayload() {
-    embedPayloadInPayloadObject()
-    const resultBlob = new Blob([payloadObject.imageData], { type: 'application/octet-binary' })
     const link = document.createElement('a');
     link.style.display = 'none';
     document.body.appendChild(link);
-    link.href = URL.createObjectURL(resultBlob);
     link.download = payloadObject.fileName;
+    
+    //If it's PNG/JPEG/GIF, add it after header
+    if (payloadObject.headerType !== "") {
+        //Form Payload buffer?
+        const encoder = new TextEncoder();
+        const payloadTypedArray = encoder.encode(document.getElementById("payload").value)
+        payloadObject.imageData = appendArrayBuffers(fileHeaderMap.get(payloadObject.headerType).buffer, payloadTypedArray.buffer)
+        payloadObject.fileName = "payload" + document.getElementById("finalExt").value
+        const resultBlob = new Blob([payloadObject.imageData], { type: 'application/octet-binary' })
+        
+        link.href = URL.createObjectURL(resultBlob);
+        link.download = payloadObject.fileName;
+    } else { //If it's for an exif, add as Exif comment
+        const exif = {};
+        exif[piexif.ExifIFD.UserComment] = document.getElementById("payload").value;
+        const exifObj = {"0th":{}, "GPS":{}, "Exif":exif}
+        payloadObject.imageData = piexif.insert(piexif.dump(exifObj), payloadObject.imageData)
+        link.download = payloadObject.fileName;
+        link.href = payloadObject.imageData
+    }
     link.click();
 }
 
@@ -63,7 +64,7 @@ function imageInfo(self) {
     console.log(file.name, file.size, file.type)
     payloadObject.fileName = file.name.split(".")[0]
     const reader = new FileReader()
-    reader.readAsArrayBuffer(file)
+    reader.readAsDataURL(file)
     reader.onload = function () {
         payloadObject.imageData = reader.result
     }

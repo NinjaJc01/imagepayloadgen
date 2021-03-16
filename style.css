@@ -1,0 +1,24 @@
+@font-face {
+    font-family: 'Ubuntu';
+    src: url('/Ubuntu-Regular.woff2') format("woff2"), url('/Ubuntu-Regular.ttf') format('truetype');
+}
+body {
+    font-family: 'Ubuntu';
+}
+
+body * {
+    font-family: 'Ubuntu';
+}
+form {
+    justify-content: flex-start;
+    display: flexbox;
+    flex-direction: column;
+    
+}
+form * {
+    flex: none;
+    padding: 5 0px;
+}
+form label {
+    margin-right: 1rem;
+}

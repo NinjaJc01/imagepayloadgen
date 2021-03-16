@@ -1,12 +1,14 @@
 <head>
     <script src="/js/index.js"></script>
     <script src="/js/piexif.js"></script>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
     <h1>PHP Image Upload Payload Generator</h1>
+    <p>This does not bypass resize on PNGs, see <a href="https://www.idontplaydarts.com/2012/06/encoding-web-shells-in-png-idat-chunks/">Encoding Webshells in PNG IDAT chunks</a></p>
+    <p>This tool currently supports EXIF comment embedded payloads, and payloads after a valid file header to bypass MIME type checks</p>
     <form>
-
         <div>
             <label for="payload">PHP Payload (with tags)</label><input id="payload" name="payload" type="text"
                 placeholder="Enter PHP payload here">
@@ -20,9 +22,8 @@
             </select>
         </div>
         <div style="display: none;" id="fileDiv">
-            <label for="">Attach Image</label><input type="file" onchange="imageInfo(this)">
-            <p><em>Note:</em> Image must be JPEG format for EXIF.</p>
-            <p>This does not bypass resize on PNGs, see <a href="https://www.idontplaydarts.com/2012/06/encoding-web-shells-in-png-idat-chunks/">Encoding Webshells in PNG IDAT chunks</a></p>
+            <label for="">Attach Image</label><input type="file" id="uploadElem" onchange="imageInfo(this)" accept="image/jpeg">
+            <span><em>Note:</em> Image must be JPEG format for EXIF.</span>
         </div>
         <div style="display: none;" id="headerDiv">
             <label for="headerOptions">Header to add:</label>
